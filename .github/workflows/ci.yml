@@ -74,3 +74,68 @@ jobs:
       - run: npm ci --prefer-offline --no-audit --no-fund
       - name: Integration tests
         run: npx jest --testPathPatterns="tests/integration" --forceExit
+
+  governance:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+      - run: npm ci --prefer-offline --no-audit --no-fund
+      - name: Iron Dome — any usage ratchet
+        run: node scripts/governance/check-any-usage.js
+      - name: Iron Dome — silent catches ratchet
+        run: node scripts/governance/check-silent-catches.js
+      - name: Iron Dome — eslint-disable ratchet
+        run: node scripts/governance/check-eslint-disable.js
+      - name: Rising Tide — mock tax
+        run: node scripts/governance/check-mock-tax.js
+      - name: SRP guardrails
+        run: node scripts/governance/guardrails-check.js
+      - name: Test discipline gate
+        run: node scripts/governance/check-skipped-tests.js
+      - name: Coverage fortress (per-file ratchet)
+        run: npx jest --coverage --forceExit --silent && node scripts/governance/check-per-file-baseline.mjs
+      - name: Collect governance metrics
+        run: node scripts/governance/collect-metrics.js
+
+  secret-scan:
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request'
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Gitleaks — scan for secrets
+        uses: gitleaks/gitleaks-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  package-audit:
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request'
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Flag dependency file changes
+        run: |
+          CHANGED=$(git diff --name-only origin/${{ github.base_ref }}...HEAD | grep -E 'package\.json|package-lock\.json' || true)
+          if [ -n "$CHANGED" ]; then
+            echo "⚠️  Dependency files changed in this PR:"
+            echo "$CHANGED"
+            echo "DEPENDENCY_CHANGES=true" >> $GITHUB_ENV
+          else
+            echo "✅ No dependency file changes"
+          fi
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+      - run: npm ci --prefer-offline --no-audit --no-fund
+      - name: npm audit (high severity)
+        run: npm audit --audit-level=high

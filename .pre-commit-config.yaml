@@ -51,3 +51,54 @@ repos:
         entry: node scripts/check-structural-governance.js
         pass_filenames: false
         always_run: true
+
+      # ── Governance Layer (Step 8) ──────────────────────────────
+
+      - id: iron-dome-any
+        name: Iron Dome — any usage ratchet
+        language: node
+        entry: node scripts/governance/check-any-usage.js
+        pass_filenames: false
+        always_run: true
+
+      - id: iron-dome-catches
+        name: Iron Dome — silent catches ratchet
+        language: node
+        entry: node scripts/governance/check-silent-catches.js
+        pass_filenames: false
+        always_run: true
+
+      - id: iron-dome-eslint-disable
+        name: Iron Dome — eslint-disable ratchet
+        language: node
+        entry: node scripts/governance/check-eslint-disable.js
+        pass_filenames: false
+        always_run: true
+
+      - id: rising-tide-mock-tax
+        name: Rising Tide — mock tax (test LOC ≤ 2x source)
+        language: node
+        entry: node scripts/governance/check-mock-tax.js
+        pass_filenames: false
+        always_run: true
+
+      - id: mock-quality
+        name: Mock Quality — adversarial mock detection
+        language: node
+        entry: node scripts/governance/check-adversarial-mocks.js
+        pass_filenames: false
+        types: [ts]
+
+      - id: srp-guardrails
+        name: SRP Guardrails — file size limits
+        language: node
+        entry: node scripts/governance/guardrails-check.js
+        pass_filenames: false
+        always_run: true
+
+      - id: test-discipline
+        name: Test Discipline — skipped test gate
+        language: node
+        entry: node scripts/governance/check-skipped-tests.js
+        pass_filenames: false
+        always_run: true

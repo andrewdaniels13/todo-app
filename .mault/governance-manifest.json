@@ -1,0 +1,82 @@
+{
+  "version": "1.0.0",
+  "generatedAt": "2026-04-09T00:00:00Z",
+  "step": 8,
+  "stack": "typescript",
+  "scripts": {
+    "ironDome": [
+      "scripts/governance/check-any-usage.js",
+      "scripts/governance/check-silent-catches.js",
+      "scripts/governance/check-eslint-disable.js"
+    ],
+    "risingTide": [
+      "scripts/governance/check-mock-tax.js"
+    ],
+    "mockQuality": [
+      "scripts/governance/check-adversarial-mocks.js"
+    ],
+    "buddySystem": [
+      "scripts/governance/verify-integration-pairing.js",
+      "scripts/governance/verify-behavioral-pairing.js"
+    ],
+    "supplyChain": [
+      "scripts/governance/check-hallucinations.js",
+      "scripts/governance/check-circular-deps.js"
+    ],
+    "gatekeeperProtocol": [
+      "scripts/governance/check-security-critical.js"
+    ],
+    "dry": [
+      "scripts/governance/check-duplicate-code.js"
+    ],
+    "srpGuardrails": [
+      "scripts/governance/guardrails-check.js"
+    ],
+    "codeHealth": [
+      "scripts/governance/code-health-check.js"
+    ],
+    "coverageFortress": [
+      "scripts/governance/check-per-file-baseline.mjs"
+    ],
+    "testDiscipline": [
+      "scripts/governance/check-skipped-tests.js"
+    ],
+    "metrics": [
+      "scripts/governance/collect-metrics.js",
+      "scripts/governance/report-metrics.js"
+    ],
+    "tia": [
+      "scripts/test-impact-analysis.js"
+    ]
+  },
+  "baselines": {
+    "dir": ".memory-layer/baselines/",
+    "files": [
+      "any-count.json",
+      "silent-catches.json",
+      "eslint-disable.json",
+      "mock-tax.json",
+      "guardrails.json",
+      "integration-pairing.json",
+      "behavioral-pairing.json",
+      "circular-deps.json",
+      "code-health.json",
+      "duplicate-code.json"
+    ]
+  },
+  "preCommitHooks": [
+    "check-any-usage",
+    "check-silent-catches",
+    "check-eslint-disable",
+    "check-mock-tax",
+    "check-adversarial-mocks",
+    "guardrails-check",
+    "check-skipped-tests"
+  ],
+  "ciOnly": [
+    "check-per-file-baseline",
+    "check-hallucinations",
+    "gitleaks",
+    "package-audit"
+  ]
+}

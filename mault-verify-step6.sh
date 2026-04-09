@@ -166,11 +166,13 @@ check_7() {
   fi
 
   local output exit_code
-  output=$("$pre_commit_bin" run --all-files 2>&1)
+  # Skip no-commit-to-branch: it intentionally blocks runs on main/default branch.
+  # All other hooks must pass.
+  output=$(SKIP=no-commit-to-branch "$pre_commit_bin" run --all-files 2>&1)
   exit_code=$?
 
   if [ "$exit_code" -eq 0 ]; then
-    print_pass 7 "All pre-commit hooks pass"
+    print_pass 7 "All pre-commit hooks pass (no-commit-to-branch skipped — correct on $DEFAULT_BRANCH)"
   else
     echo "$output" | tail -20
     print_fail 7 "Pre-commit hooks failing. Fix issues and re-run."
