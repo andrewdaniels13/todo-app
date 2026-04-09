@@ -10,7 +10,7 @@ const config: Config = {
     '<rootDir>/tests/behavioral/**/*.behavioral.test.ts',
   ],
   coverageDirectory: 'coverage',
-  coverageReporters: ['text', 'text-summary', 'lcov'],
+  coverageReporters: ['text', 'text-summary', 'lcov', 'json-summary'],
   coverageThreshold: {
     global: {
       branches: 80,
