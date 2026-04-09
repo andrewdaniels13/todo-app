@@ -3,6 +3,8 @@ version: 1
 environment:
   shell: 'bash'
 
+# Note: conventions.naming is for documentation only (not enforced by detectors)
+# Use Detectors.directoryReinforcement.rules for file placement enforcement
 conventions:
   naming:
     - filePattern: '*.ts'
@@ -21,6 +23,49 @@ deprecatedPatterns:
     message: 'Use axios or node-fetch instead of request.'
     languages: [typescript, javascript]
 
+  - id: dep-lodash
+    import: lodash
+    message: 'Use native array/object methods. Avoid full lodash import.'
+    languages: [typescript, javascript]
+
+# UC18: Structural Governance Rules (top-level key)
+rules:
+  - id: "TEST-001"
+    name: "No Focused Tests"
+    severity: "error"
+    files: "**/*.test.ts"
+    assertions:
+      - type: "forbidden_pattern"
+        pattern: "(describe|it|test)\\.only"
+        message: "Remove .only() before committing"
+
+  - id: "TEST-002"
+    name: "No Skipped Tests"
+    severity: "error"
+    files: "**/*.test.ts"
+    assertions:
+      - type: "forbidden_pattern"
+        pattern: "(describe|it|test)\\.skip"
+        message: "Do not commit skipped tests"
+
+  - id: "SRC-001"
+    name: "No console.log in source files"
+    severity: "warn"
+    files: "*.ts"
+    assertions:
+      - type: "forbidden_pattern"
+        pattern: "console\\.log\\("
+        message: "Use a proper logger instead of console.log in source files"
+
+  - id: "SRC-002"
+    name: "No hardcoded secrets"
+    severity: "error"
+    files: "**/*.ts"
+    assertions:
+      - type: "forbidden_pattern"
+        pattern: "(password|secret|token|apiKey)\\s*=\\s*['\"][^'\"]{8,}"
+        message: "Do not hardcode secrets — use environment variables"
+
 Detectors:
   # UC01: Directory Reinforcement
   directoryReinforcement:
@@ -32,6 +77,9 @@ Detectors:
       - pattern: '**/*.spec.{ts,js}'
         expectedDir: 'tests'
         reason: 'Spec files should be in tests/'
+      - pattern: '**/*.behavioral.test.{ts,js}'
+        expectedDir: 'tests/behavioral'
+        reason: 'Behavioral tests should be in tests/behavioral/'
 
   # UC03/UC10: Naming Convention
   namingConvention:
@@ -45,6 +93,7 @@ Detectors:
       - '**/*.test.{ts,js}'
       - '**/*.d.ts'
       - '**/*.config.*'
+      - '**/[A-Z]*.ts'
 
   # UC04: Environment Reinforcement
   environmentReinforcement:
@@ -62,17 +111,50 @@ Detectors:
       - '**/*.bak'
       - '**/debug_*'
 
+  # UC07: Flat Architecture
+  # This is a flat TypeScript CLI — source files live at root.
+  # Threshold is set high to accommodate the intentionally flat layout.
+  flatArchitecture:
+    enabled: true
+    targets:
+      - path: '.'
+        maxRootFiles: 25
+        minSubdirs: 2
+        excludePatterns:
+          - 'dist/**'
+          - 'node_modules/**'
+          - 'coverage/**'
+
   # UC08: Configuration Chaos
   configChaos:
     enabled: true
     requiredConfigs:
+      - '.gitignore'
       - 'package.json'
       - 'tsconfig.json'
+      - '.env.example'
+      - '.pre-commit-config.yaml'
+      - 'Dockerfile'
+      - '.github/workflows/ci.yml'
 
   # UC09: File Proliferation
   fileProliferation:
     enabled: true
     threshold: 3
+
+  # UC11: Overcrowded Folders
+  overcrowdedFolders:
+    enabled: true
+    targets:
+      - path: 'tests/unit'
+        maxFiles: 20
+      - path: 'tests/integration'
+        maxFiles: 20
+
+  # UC12: Misplaced Utilities
+  misplacedUtilities:
+    enabled: true
+    centralLocation: 'scripts'
 
   # UC16: Dependency Health (Pro)
   dependencyHealth:
@@ -86,7 +168,7 @@ Detectors:
   # Project Scaffolding
   projectScaffolding:
     enabled: true
-    rootMaxFiles: 15
+    rootMaxFiles: 25
 
   # Dead End Directories
   deadEnds:
@@ -94,5 +176,20 @@ Detectors:
     ignoreGlobs:
       - 'node_modules/**'
       - 'dist/**'
+      - 'coverage/**'
     maxFiles: 500
     timeBudgetMs: 5000
+
+# UC13: Application Flows
+# High-impact files that should trigger careful review on change
+applicationFlows:
+  - id: core-todo
+    name: Core Todo Logic
+    entryFile: 'todo.ts'
+    description: 'Changes to todo.ts affect all tests and the CLI.'
+    severity: warn
+  - id: env-config
+    name: Environment Configuration
+    entryFile: 'env.ts'
+    description: 'Changes to env.ts affect runtime environment validation.'
+    severity: warn

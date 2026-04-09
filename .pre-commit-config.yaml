@@ -37,3 +37,17 @@ repos:
         entry: npx jest --testPathPatterns="tests/unit" --forceExit --passWithNoTests
         pass_filenames: false
         always_run: true
+
+      - id: dependency-health
+        name: Dependency Health (UC16)
+        language: system
+        entry: npm audit --audit-level=high
+        pass_filenames: false
+        stages: [pre-commit]
+
+      - id: structural-governance
+        name: Structural Governance (UC18)
+        language: node
+        entry: node scripts/check-structural-governance.js
+        pass_filenames: false
+        always_run: true
