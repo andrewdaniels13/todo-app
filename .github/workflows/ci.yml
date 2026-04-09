@@ -19,7 +19,7 @@ jobs:
         env:
           PR_TITLE: ${{ github.event.pull_request.title }}
         run: |
-          if ! echo "$PR_TITLE" | grep -qE '^\[(feat|fix|chore|docs|refactor|test|ci|perf|style|build|revert|mault)\]|^(feat|fix|chore|docs|refactor|test|ci|perf|style|build|revert)(\(.+\))?!?:'; then
+          if ! echo "$PR_TITLE" | grep -qE '^\[(feat|fix|chore|docs|refactor|test|ci|perf|style|build|revert|mault[^]]*)\]|^(feat|fix|chore|docs|refactor|test|ci|perf|style|build|revert)(\(.+\))?!?:'; then
             echo "ERROR: PR title must follow Conventional Commits or [TYPE] format."
             echo "Title: $PR_TITLE"
             exit 1
