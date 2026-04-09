@@ -26,3 +26,6 @@ npm-debug.log*
 
 # Claude Code internal
 .claude/
+
+# Scaffolded by Mault — do not commit
+.claude/hooks/
