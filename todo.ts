@@ -1,4 +1,5 @@
 // todo.ts – Core todo functions and types
+import { logger } from './logger';
 
 // ─── Interface ───────────────────────────────────────────────
 export interface Todo {
@@ -41,7 +42,7 @@ export function addTodo(title: string): Todo {
   };
 
   todos.push(newTodo);
-  console.log(`✅ Added: "${newTodo.title}" (ID: ${newTodo.id})`);
+  logger.info(`✅ Added: "${newTodo.title}" (ID: ${newTodo.id})`);
   return newTodo;
 }
 
@@ -51,7 +52,7 @@ export function completeTodo(id: number): void {
   if (!todo) throw new Error(`Todo with ID ${id} not found.`);
 
   todo.completed = true;
-  console.log(`🎉 Completed: "${todo.title}"`);
+  logger.info(`🎉 Completed: "${todo.title}"`);
 }
 
 /** Delete a todo by ID */
@@ -60,35 +61,35 @@ export function deleteTodo(id: number): void {
   if (index === -1) throw new Error(`Todo with ID ${id} not found.`);
 
   const removed = todos.splice(index, 1)[0];
-  console.log(`🗑️  Deleted: "${removed.title}"`);
+  logger.info(`🗑️  Deleted: "${removed.title}"`);
 }
 
 /** List all todos */
 export function listTodos(): void {
   if (todos.length === 0) {
-    console.log('📭 No todos yet.');
+    logger.info('📭 No todos yet.');
     return;
   }
 
-  console.log('\n📋 Todo List:');
+  logger.info('\n📋 Todo List:');
   todos.forEach((t) => {
     const status = t.completed ? '✔' : '○';
-    console.log(`  [${status}] (${t.id}) ${t.title}`);
+    logger.info(`  [${status}] (${t.id}) ${t.title}`);
   });
-  console.log('');
+  logger.info('');
 }
 
 /** List only active (incomplete) todos */
 export function listActiveTodos(): void {
   const active = todos.filter((t) => !t.completed);
   if (active.length === 0) {
-    console.log('📭 No active todos.');
+    logger.info('📭 No active todos.');
     return;
   }
 
-  console.log('\n📋 Active Todos:');
+  logger.info('\n📋 Active Todos:');
   active.forEach((t) => {
-    console.log(`  [○] (${t.id}) ${t.title}`);
+    logger.info(`  [○] (${t.id}) ${t.title}`);
   });
-  console.log('');
+  logger.info('');
 }
