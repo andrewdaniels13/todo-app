@@ -23,3 +23,6 @@ npm-debug.log*
 # All .env variants
 .env.*
 !.env.example
+
+# Claude Code internal
+.claude/

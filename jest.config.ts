@@ -3,7 +3,14 @@ import type { Config } from 'jest';
 const config: Config = {
   preset: 'ts-jest',
   testEnvironment: 'node',
-  testMatch: ['**/tests/**/*.test.ts'],
+  maxWorkers: '50%',
+  testMatch: [
+    '<rootDir>/tests/unit/**/*.test.ts',
+    '<rootDir>/tests/integration/**/*.test.ts',
+    '<rootDir>/tests/behavioral/**/*.behavioral.test.ts',
+  ],
+  coverageDirectory: 'coverage',
+  coverageReporters: ['text', 'text-summary', 'lcov'],
   coverageThreshold: {
     global: {
       branches: 80,
