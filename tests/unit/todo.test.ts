@@ -6,7 +6,7 @@ import {
   listActiveTodos,
   resetStore,
   todos,
-} from '../todo';
+} from '../../todo';
 
 beforeEach(() => {
   resetStore();
