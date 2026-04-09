@@ -1,0 +1,18 @@
+[extend]
+# Extend the default gitleaks ruleset
+useDefault = true
+
+[allowlist]
+description = "Allowlisted patterns for this project"
+paths = [
+  ".env.example",
+  ".mault/",
+  "node_modules/",
+  "coverage/",
+]
+regexes = [
+  # Allow placeholder values in example files
+  '''your[-_].*[-_]here''',
+  # Allow test fixture values
+  '''test[-_]secret''',
+]
