@@ -41,3 +41,6 @@ my-toy-project/
 
 - Node.js v18+
 - npm v8+
+
+## CI Status
+![CI](https://github.com/andrewdaniels13/todo-app/actions/workflows/ci.yml/badge.svg)
