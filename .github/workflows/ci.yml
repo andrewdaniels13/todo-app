@@ -11,6 +11,32 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  validate-pr:
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request'
+    steps:
+      - name: Validate PR title
+        env:
+          PR_TITLE: ${{ github.event.pull_request.title }}
+        run: |
+          if ! echo "$PR_TITLE" | grep -qE '^\[(feat|fix|chore|docs|refactor|test|ci|perf|style|build|revert|mault)\]|^(feat|fix|chore|docs|refactor|test|ci|perf|style|build|revert)(\(.+\))?!?:'; then
+            echo "ERROR: PR title must follow Conventional Commits or [TYPE] format."
+            echo "Title: $PR_TITLE"
+            exit 1
+          fi
+          echo "PR title OK: $PR_TITLE"
+
+      - name: Validate branch name
+        env:
+          BRANCH: ${{ github.head_ref }}
+        run: |
+          if ! echo "$BRANCH" | grep -qE '^(feat|fix|chore|docs|refactor|test|ci|perf|style|build|release)/.+'; then
+            echo "ERROR: Branch must match pattern: <type>/<description>"
+            echo "Branch: $BRANCH"
+            exit 1
+          fi
+          echo "Branch name OK: $BRANCH"
+
   lint:
     runs-on: ubuntu-latest
     steps:

@@ -220,7 +220,7 @@ check_4() {
 check_5() {
   local found=false
 
-  if [ -d "tests/mocks" ] && ls tests/mocks/*.ts tests/mocks/*.js >/dev/null 2>&1; then
+  if [ -d "tests/mocks" ] && { ls tests/mocks/*.ts >/dev/null 2>&1 || ls tests/mocks/*.js >/dev/null 2>&1; }; then
     found=true
   fi
   if [ -f "tests/conftest.py" ] || [ -d "tests/fixtures" ]; then found=true; fi
