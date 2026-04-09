@@ -1,0 +1,98 @@
+version: 1
+
+environment:
+  shell: 'bash'
+
+conventions:
+  naming:
+    - filePattern: '*.ts'
+      className: 'PascalCase'
+      functionName: 'camelCase'
+      constantName: 'SCREAMING_SNAKE_CASE'
+
+deprecatedPatterns:
+  - id: dep-moment
+    import: moment
+    message: 'Use date-fns or dayjs instead of moment.'
+    languages: [typescript, javascript]
+
+  - id: dep-request
+    import: request
+    message: 'Use axios or node-fetch instead of request.'
+    languages: [typescript, javascript]
+
+Detectors:
+  # UC01: Directory Reinforcement
+  directoryReinforcement:
+    enabled: true
+    rules:
+      - pattern: '**/*.test.{ts,js}'
+        expectedDir: 'tests'
+        reason: 'Test files should be in tests/'
+      - pattern: '**/*.spec.{ts,js}'
+        expectedDir: 'tests'
+        reason: 'Spec files should be in tests/'
+
+  # UC03/UC10: Naming Convention
+  namingConvention:
+    enabled: true
+    fileNaming: 'kebab-case'
+    variableNaming: 'camelCase'
+    functionNaming: 'camelCase'
+    classNaming: 'PascalCase'
+    constantNaming: 'SCREAMING_SNAKE_CASE'
+    excludePatterns:
+      - '**/*.test.{ts,js}'
+      - '**/*.d.ts'
+      - '**/*.config.*'
+
+  # UC04: Environment Reinforcement
+  environmentReinforcement:
+    enabled: true
+    checkPaths: true
+    checkCommands: true
+
+  # UC06: Temporary Files
+  tempFiles:
+    enabled: true
+    patterns:
+      - '**/*.tmp'
+      - '**/temp_*'
+      - '**/scratch_*'
+      - '**/*.bak'
+      - '**/debug_*'
+
+  # UC08: Configuration Chaos
+  configChaos:
+    enabled: true
+    requiredConfigs:
+      - 'package.json'
+      - 'tsconfig.json'
+
+  # UC09: File Proliferation
+  fileProliferation:
+    enabled: true
+    threshold: 3
+
+  # UC16: Dependency Health (Pro)
+  dependencyHealth:
+    enabled: true
+    severityThreshold: 'moderate'
+
+  # UC17: Production Readiness (Pro)
+  productionReadiness:
+    enabled: true
+
+  # Project Scaffolding
+  projectScaffolding:
+    enabled: true
+    rootMaxFiles: 15
+
+  # Dead End Directories
+  deadEnds:
+    enabled: true
+    ignoreGlobs:
+      - 'node_modules/**'
+      - 'dist/**'
+    maxFiles: 500
+    timeBudgetMs: 5000
